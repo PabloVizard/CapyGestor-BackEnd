@@ -14,7 +14,6 @@ namespace Application.Mappings
     {
         public BaseMappings()
         {
-            CreateMap<Usuario, UsuarioModel>().ReverseMap();
         }
     }
 }

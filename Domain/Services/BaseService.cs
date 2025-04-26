@@ -81,7 +81,7 @@ namespace Domain.Services
             return _repository.Query();
         }
 
-        public virtual async Task<object> Add(Entity entity)
+        public virtual async Task<Object> Add(Entity entity)
         {
             return await _repository.Add(entity);
         }

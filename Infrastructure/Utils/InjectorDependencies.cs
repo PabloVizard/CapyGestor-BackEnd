@@ -24,7 +24,7 @@ namespace Infrastructure.Utils
             #endregion
 
             #region AutoMapper
-            services.AddAutoMapper(typeof(BaseMappings));
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             #endregion
 
             #region Application

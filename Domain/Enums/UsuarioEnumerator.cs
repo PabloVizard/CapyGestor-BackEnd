@@ -8,7 +8,7 @@ namespace Domain.Enums
 {
     public enum UsuarioEnumerator
     {
-        Administrador,
+        Administrador = 1,
         Usuario,
         Gestor
     }

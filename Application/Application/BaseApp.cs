@@ -2,6 +2,7 @@
 using Application.Models;
 using AutoMapper;
 using Domain.Entities;
+using Application.Models;
 using Domain.Services.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -75,6 +76,15 @@ namespace Application.Application
         public async Task<List<Entity>> ListAsync(Expression<Func<Entity, bool>> predicate)
         {
             return await _baseService.ListAsync(predicate);
+        }
+        public async Task<PagedResultModel<Model>> ListPagedAsync(string searchTerm, string propertyName, int pageNumber, int pageSize)
+        {
+            var items = await _baseService.ListPagedAsync(searchTerm, propertyName, pageNumber, pageSize);
+            var totalCount = await _baseService.CountAsync(searchTerm, propertyName);
+
+            var mappedItems = _mapper.Map<List<Model>>(items);
+
+            return new PagedResultModel<Model>(mappedItems, totalCount, pageNumber, pageSize);
         }
 
         public IQueryable<Entity> Query()

@@ -23,6 +23,7 @@ namespace Application.Application.Interfaces
         Task<List<Entity>> ListAsync();
         List<Entity> List(Expression<Func<Entity, bool>> predicate);
         Task<List<Entity>> ListAsync(Expression<Func<Entity, bool>> predicate);
+        Task<PagedResultModel<Model>> ListPagedAsync(string searchTerm, string propertyName, int pageNumber, int pageSize);
         IQueryable<Entity> Query();
         Task<object> Add(Model dado);
         void AddRange(IEnumerable<Entity> entities);

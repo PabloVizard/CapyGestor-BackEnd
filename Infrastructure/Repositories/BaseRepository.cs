@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
@@ -17,11 +16,29 @@ namespace Infrastructure.Repositories
     {
         private readonly DbContext _context;
         private readonly DbSet<Entity> _dbSet;
+        private List<Expression<Func<Entity, object>>> _includes = new();
 
         public BaseRepository(DbContext context)
         {
             _context = context;
             _dbSet = _context.Set<Entity>();
+        }
+
+        // Permite encadear Includes antes dos métodos Find, List etc.
+        public BaseRepository<Entity> Include(Expression<Func<Entity, object>> include)
+        {
+            _includes.Add(include);
+            return this;
+        }
+
+        private IQueryable<Entity> ApplyIncludes(IQueryable<Entity> query)
+        {
+            foreach (var include in _includes)
+            {
+                query = query.Include(include);
+            }
+            _includes.Clear(); // Limpa os includes após o uso
+            return query;
         }
 
         public bool Any(Expression<Func<Entity, bool>> predicate)
@@ -51,32 +68,99 @@ namespace Infrastructure.Repositories
 
         public Entity FindBy(Expression<Func<Entity, bool>> predicate)
         {
-            return _dbSet.FirstOrDefault(predicate);
+            var query = ApplyIncludes(_dbSet.AsQueryable());
+            return query.FirstOrDefault(predicate);
         }
 
         public async Task<Entity> FindByAsync(Expression<Func<Entity, bool>> predicate)
         {
-            return await _dbSet.FirstOrDefaultAsync(predicate);
+            var query = ApplyIncludes(_dbSet.AsQueryable());
+            return await query.FirstOrDefaultAsync(predicate);
         }
 
         public List<Entity> List()
         {
-            return _dbSet.ToList();
+            var query = ApplyIncludes(_dbSet.AsQueryable());
+            return query.ToList();
         }
 
         public async Task<List<Entity>> ListAsync()
         {
-            return await _dbSet.ToListAsync();
+            var query = ApplyIncludes(_dbSet.AsQueryable());
+            return await query.ToListAsync();
         }
 
         public List<Entity> List(Expression<Func<Entity, bool>> predicate)
         {
-            return _dbSet.Where(predicate).ToList();
+            var query = ApplyIncludes(_dbSet.AsQueryable());
+            return query.Where(predicate).ToList();
         }
 
         public async Task<List<Entity>> ListAsync(Expression<Func<Entity, bool>> predicate)
         {
-            return await _dbSet.Where(predicate).ToListAsync();
+            var query = ApplyIncludes(_dbSet.AsQueryable());
+            return await query.Where(predicate).ToListAsync();
+        }
+
+        public async Task<int> CountAsync(string searchTerm, string propertyName)
+        {
+            IQueryable<Entity> query = _dbSet;
+
+            if (!string.IsNullOrWhiteSpace(searchTerm) && !string.IsNullOrWhiteSpace(propertyName))
+            {
+                var parameter = Expression.Parameter(typeof(Entity), "e");
+                var property = Expression.Property(parameter, propertyName);
+                var searchTermExpression = Expression.Constant(searchTerm);
+
+                if (property.Type == typeof(string))
+                {
+                    var containsMethod = typeof(string).GetMethod("Contains", new[] { typeof(string) });
+                    var containsExpression = Expression.Call(property, containsMethod, searchTermExpression);
+                    var lambda = Expression.Lambda<Func<Entity, bool>>(containsExpression, parameter);
+                    query = query.Where(lambda);
+                }
+                else
+                {
+                    var equalsExpression = Expression.Equal(property, Expression.Convert(searchTermExpression, property.Type));
+                    var lambda = Expression.Lambda<Func<Entity, bool>>(equalsExpression, parameter);
+                    query = query.Where(lambda);
+                }
+            }
+
+            return await query.CountAsync();
+        }
+
+        public async Task<List<Entity>> ListPagedAsync(string searchTerm, string propertyName, int pageNumber = 1, int pageSize = 10)
+        {
+            IQueryable<Entity> query = _dbSet;
+
+            if (!string.IsNullOrWhiteSpace(searchTerm) && !string.IsNullOrWhiteSpace(propertyName))
+            {
+                var parameter = Expression.Parameter(typeof(Entity), "e");
+                var property = Expression.Property(parameter, propertyName);
+                var searchTermExpression = Expression.Constant(searchTerm);
+
+                if (property.Type == typeof(string))
+                {
+                    var containsMethod = typeof(string).GetMethod("Contains", new[] { typeof(string) });
+                    var containsExpression = Expression.Call(property, containsMethod, searchTermExpression);
+                    var lambda = Expression.Lambda<Func<Entity, bool>>(containsExpression, parameter);
+                    query = query.Where(lambda);
+                }
+                else
+                {
+                    var equalsExpression = Expression.Equal(property, Expression.Convert(searchTermExpression, property.Type));
+                    var lambda = Expression.Lambda<Func<Entity, bool>>(equalsExpression, parameter);
+                    query = query.Where(lambda);
+                }
+            }
+
+            query = ApplyIncludes(query);
+
+            return await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
         }
 
         public IQueryable<Entity> Query()
@@ -86,7 +170,8 @@ namespace Infrastructure.Repositories
 
         public virtual async Task<object> Add(Entity entity)
         {
-            return _dbSet.Add(entity);
+            await _dbSet.AddAsync(entity);
+            return entity;
         }
 
         public void AddRange(IEnumerable<Entity> entities)
@@ -104,8 +189,8 @@ namespace Infrastructure.Repositories
                 }
                 else
                 {
-                    removivel.Removido = true; 
-                    _dbSet.Update(entity); 
+                    removivel.Removido = true;
+                    _dbSet.Update(entity);
                 }
             }
             else
@@ -137,21 +222,16 @@ namespace Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        #region Disposed https://docs.microsoft.com/pt-br/dotnet/standard/garbage-collection/implementing-dispose
-        // Flag: Has Dispose already been called?
+        #region Disposed 
         bool disposed = false;
-        // Instantiate a SafeHandle instance.
         SafeHandle handle = new SafeFileHandle(IntPtr.Zero, true);
 
-
-        // Public implementation of Dispose pattern callable by consumers.
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
 
-        // Protected implementation of Dispose pattern.
         protected virtual void Dispose(bool disposing)
         {
             if (disposed)
@@ -161,7 +241,6 @@ namespace Infrastructure.Repositories
             {
                 handle.Dispose();
                 // Free any other managed objects here.
-                //
             }
 
             disposed = true;

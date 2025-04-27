@@ -17,6 +17,8 @@ namespace Infrastructure.Context
         private readonly IConfiguration _configuration;
         public DataContext(DbContextOptions<DataContext> options) : base(options) { }
         public DbSet<Usuario> Usuario { get; set; }
+        public DbSet<Empresa> Empresa { get; set; }
+        public DbSet<UsuarioEmpresa> UsuarioEmpresa { get; set; }
 
         public DataContext(DbContextOptions<DataContext> options, IConfiguration configuration)
         : base(options)
@@ -38,6 +40,8 @@ namespace Infrastructure.Context
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfiguration(new UsuarioConfiguration());
+            modelBuilder.ApplyConfiguration(new EmpresaConfiguration());
+            modelBuilder.ApplyConfiguration(new UsuarioEmpresaConfiguration());
         }
     }
 }

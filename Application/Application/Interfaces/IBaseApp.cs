@@ -26,8 +26,8 @@ namespace Application.Application.Interfaces
         IQueryable<Entity> Query();
         Task<object> Add(Model dado);
         void AddRange(IEnumerable<Entity> entities);
-        void Remove(Entity entity);
-        void RemoveRange(IEnumerable<Entity> entities);
+        void Remove(Entity entity, bool realDelete = false);
+        void RemoveRange(IEnumerable<Entity> entities, bool realDelete = false);
         void Update(Entity dado);
         Task SaveChangesAsync();
     }

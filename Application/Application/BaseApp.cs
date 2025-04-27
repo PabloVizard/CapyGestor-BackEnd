@@ -92,14 +92,14 @@ namespace Application.Application
             _baseService.AddRange(entities);
         }
 
-        public void Remove(Entity entity)
+        public void Remove(Entity entity, bool realDelete = false)
         {
-            _baseService.Remove(entity);
+            _baseService.Remove(entity, realDelete);
         }
 
-        public void RemoveRange(IEnumerable<Entity> entities)
+        public void RemoveRange(IEnumerable<Entity> entities, bool realDelete = false)
         {
-            _baseService.RemoveRange(entities);
+            _baseService.RemoveRange(entities, realDelete);
         }
 
         public void Update(Entity dado)

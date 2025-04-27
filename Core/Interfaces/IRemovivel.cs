@@ -4,12 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.Enums
+namespace Core.Interfaces
 {
-    public enum UsuarioEnumerator
+    public interface IRemovivel
     {
-        Administrador = 1,
-        Usuario,
-        Gestor
+        public bool Removido { get; set; }  
     }
 }

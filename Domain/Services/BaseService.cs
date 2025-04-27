@@ -91,14 +91,14 @@ namespace Domain.Services
             _repository.AddRange(entities);
         }
 
-        public virtual void Remove(Entity entity)
+        public void Remove(Entity entity, bool realDelete = false)
         {
-            _repository.Remove(entity);
+            _repository.Remove(entity, realDelete);
         }
 
-        public virtual void RemoveRange(IEnumerable<Entity> entities)
+        public virtual void RemoveRange(IEnumerable<Entity> entities, bool realDelete = false)
         {
-            _repository.RemoveRange(entities);
+            _repository.RemoveRange(entities, realDelete);
         }
 
         public virtual void Update(Entity entity)

@@ -8,7 +8,7 @@ namespace Application.Models
 {
     public class LoginModel
     {
-        public string login { get; set; }
-        public string senha { get; set; }
+        public string Login { get; set; }
+        public string Senha { get; set; }
     }
 }

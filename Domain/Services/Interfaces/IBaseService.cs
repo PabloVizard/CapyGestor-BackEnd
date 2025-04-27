@@ -24,8 +24,8 @@ namespace Domain.Services.Interfaces
         IQueryable<Entity> Query();
         Task<object> Add(Entity entity);
         void AddRange(IEnumerable<Entity> entities);
-        void Remove(Entity entity);
-        void RemoveRange(IEnumerable<Entity> entities);
+        void Remove(Entity entity, bool realDelete = false);
+        void RemoveRange(IEnumerable<Entity> entities, bool realDelete = false);
         void Update(Entity entity);
         Task SaveChangesAsync();
 

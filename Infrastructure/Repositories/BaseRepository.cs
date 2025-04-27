@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using Core.Interfaces;
+using Domain.Entities;
 using Domain.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Win32.SafeHandles;
@@ -93,14 +94,32 @@ namespace Infrastructure.Repositories
             _dbSet.AddRange(entities);
         }
 
-        public void Remove(Entity entity)
+        public void Remove(Entity entity, bool realDelete = false)
         {
-            _dbSet.Remove(entity);
+            if (entity is IRemovivel removivel)
+            {
+                if (realDelete)
+                {
+                    _dbSet.Remove(entity);
+                }
+                else
+                {
+                    removivel.Removido = true; 
+                    _dbSet.Update(entity); 
+                }
+            }
+            else
+            {
+                _dbSet.Remove(entity);
+            }
         }
 
-        public void RemoveRange(IEnumerable<Entity> entities)
+        public void RemoveRange(IEnumerable<Entity> entities, bool realDelete = false)
         {
-            _dbSet.RemoveRange(entities);
+            foreach (var entity in entities)
+            {
+                Remove(entity, realDelete);
+            }
         }
 
         public void Update(Entity entity)

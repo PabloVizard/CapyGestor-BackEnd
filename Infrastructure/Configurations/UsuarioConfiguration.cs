@@ -45,11 +45,19 @@ namespace Infrastructure.Configurations
                 .IsRequired()
                 .HasDefaultValue(false);
 
-            builder.Property(u => u.DataCriacao)
+            builder.Property(u => u.DataCadastro)
                 .IsRequired()
                 .HasDefaultValueSql("CURRENT_TIMESTAMP"); 
 
             builder.Property(u => u.UltimoAcesso);
+
+            builder.HasMany(u => u.EmpresasCadastradas)
+               .WithOne(e => e.UsuarioResponsavel)
+               .HasForeignKey(e => e.UsuarioResponsavelId);
+
+            builder.HasMany(u => u.UsuarioEmpresas)
+                   .WithOne(ue => ue.Usuario)
+                   .HasForeignKey(ue => ue.UsuarioId);
         }
     }
 }

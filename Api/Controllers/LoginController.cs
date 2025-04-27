@@ -3,14 +3,11 @@ using Application.Application.Interfaces;
 using Application.Models;
 using AutoMapper;
 using Domain.Entities;
-using Domain.Enums;
 using Infrastructure.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Options;
-using System.Runtime.Intrinsics.Arm;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Api.Controllers
 {
@@ -36,14 +33,14 @@ namespace Api.Controllers
         {
             try
             {
-                if (loginModel == null || string.IsNullOrEmpty(loginModel.login) || string.IsNullOrEmpty(loginModel.senha))
+                if (loginModel == null || string.IsNullOrEmpty(loginModel.Login) || string.IsNullOrEmpty(loginModel.Senha))
                 {
                     return Unauthorized("Parametros Invalidos");
                 }
 
-                loginModel.senha = Cryptography.ConvertToSha256Hash(loginModel.senha).ToLower();
+                loginModel.Senha = Cryptography.ConvertToSha256Hash(loginModel.Senha).ToLower();
 
-                var user = await _usuarioApp.FindByAsync(x => x.Login == loginModel.login && x.Senha == loginModel.senha);
+                var user = await _usuarioApp.FindByAsync(x => x.Login == loginModel.Login && x.Senha == loginModel.Senha);
 
                 if (user == null)
                 {
@@ -104,7 +101,7 @@ namespace Api.Controllers
                     TipoUsuario = usuarioModel.TipoUsuario,
                     Ativo = true,
                     Removido = false,
-                    DataCriacao = DateTime.UtcNow
+                    DataCadastro = DateTime.UtcNow
                 };
                 var save = await _usuarioApp.Add(novoUsuario);
 

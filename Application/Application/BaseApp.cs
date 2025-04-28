@@ -23,6 +23,11 @@ namespace Application.Application
             _baseService = baseService;
             _mapper = mapper;
         }
+        public IBaseApp<Entity, Model> Include(Expression<Func<Entity, object>> include)
+        {
+            _baseService.Include(include);
+            return this;
+        }
 
         public bool Any(Expression<Func<Entity, bool>> predicate)
         {

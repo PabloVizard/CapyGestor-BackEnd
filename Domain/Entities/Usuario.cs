@@ -33,7 +33,7 @@ namespace Domain.Entities
         public DateTime DataCadastro { get; set; } = DateTime.UtcNow;
 
         public DateTime? UltimoAcesso { get; set; }
-        public ICollection<Empresa> EmpresasCadastradas { get; set; }
-        public ICollection<UsuarioEmpresa> UsuarioEmpresas { get; set; }
+        public ICollection<Empresa>? EmpresasCadastradas { get; set; }
+        public ICollection<UsuarioEmpresa>? UsuarioEmpresas { get; set; }
     }
 }

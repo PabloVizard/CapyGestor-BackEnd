@@ -10,6 +10,7 @@ namespace Domain.Repositories.Interfaces
 {
     public interface IBaseRepository<Entity> where Entity : BaseEntity
     {
+        IBaseRepository<Entity> Include(Expression<Func<Entity, object>> include);
         bool Any(Expression<Func<Entity, bool>> predicate);
         Task<bool> AnyAsync(Expression<Func<Entity, bool>> predicate);
 

@@ -25,11 +25,11 @@ namespace Application.Models
         public string? Complemento { get; set; }
         public string? Bairro { get; set; }
         public string? Cidade { get; set; }
-        public bool Ativo { get; set; }
+        public bool Ativo { get; set; } = true;
         public bool Removido { get; set; }
         public DateTime DataCadastro { get; set; } = DateTime.UtcNow;
         public int UsuarioResponsavelId { get; set; }
-        public UsuarioModel UsuarioResponsavel { get; set; }
-        public ICollection<UsuarioEmpresaModel> UsuarioEmpresas { get; set; }
+        public UsuarioModel? UsuarioResponsavel { get; set; }
+        public ICollection<UsuarioEmpresaModel>? UsuarioEmpresas { get; set; }
     }
 }

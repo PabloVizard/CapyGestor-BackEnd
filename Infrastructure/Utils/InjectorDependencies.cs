@@ -31,6 +31,8 @@ namespace Infrastructure.Utils
 
             services.AddScoped(typeof(IBaseApp<,>), typeof(BaseApp<,>));
             services.AddScoped<IUsuarioApp, UsuarioApp>();
+            services.AddScoped<IEmpresaApp, EmpresaApp>();
+            services.AddScoped<IUsuarioEmpresaApp, UsuarioEmpresaApp>();
 
             #endregion
 
@@ -38,6 +40,8 @@ namespace Infrastructure.Utils
 
             services.AddScoped(typeof(IBaseService<>), typeof(BaseService<>));
             services.AddScoped<IUsuarioService, UsuarioService>();
+            services.AddScoped<IEmpresaService, EmpresaService>();
+            services.AddScoped<IUsuarioEmpresaService, UsuarioEmpresaService>();
 
             #endregion
 
@@ -45,6 +49,8 @@ namespace Infrastructure.Utils
 
             services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
             services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+            services.AddScoped<IEmpresaRepository, EmpresaRepository>();
+            services.AddScoped<IUsuarioEmpresaRepository, UsuarioEmpresaRepository>();
             #endregion
         }
     }

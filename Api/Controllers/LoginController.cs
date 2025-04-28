@@ -103,16 +103,14 @@ namespace Api.Controllers
                     Removido = false,
                     DataCadastro = DateTime.UtcNow
                 };
-                var save = await _usuarioApp.Add(novoUsuario);
+                var usuarioSalvo = await _usuarioApp.Add(novoUsuario);
 
                 await _usuarioApp.SaveChangesAsync();
-
-                var usuarioBanco = (EntityEntry<Usuario>) save;
 
                 return Ok(new
                 {
                     message = "Usuário registrado com sucesso",
-                    data = usuarioBanco.Entity
+                    data = usuarioSalvo
                 });
             }
             catch (System.Exception)

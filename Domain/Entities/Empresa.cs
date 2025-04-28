@@ -24,7 +24,7 @@ namespace Domain.Entities
         public string? Complemento { get; set; }
         public string? Bairro { get; set; }
         public string? Cidade { get; set; }
-        public bool Ativo { get; set; }
+        public bool Ativo { get; set; } = true;
         public bool Removido { get; set; }
         public DateTime DataCadastro { get; set; } = DateTime.UtcNow;
         public int UsuarioResponsavelId { get; set; }

@@ -6,20 +6,25 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Domain.Services
 {
     public class BaseService<Entity> : IBaseService<Entity> where Entity : BaseEntity
     {
-        private readonly IBaseRepository<Entity> _repository;
-        private readonly IMapper _mapper;
+        protected readonly IBaseRepository<Entity> _repository;
+        protected readonly IMapper _mapper;
 
         protected BaseService(IBaseRepository<Entity> repository, IMapper mapper)
         {
             _repository = repository;
             _mapper = mapper;
+        }
+
+        public IBaseService<Entity> Include(Expression<Func<Entity, object>> include)
+        {
+            _repository.Include(include);
+            return this;
         }
 
         public virtual bool Any(Expression<Func<Entity, bool>> predicate)
@@ -31,7 +36,8 @@ namespace Domain.Services
         {
             return await _repository.AnyAsync(predicate);
         }
-        public IQueryable<Entity> AsNoTracking()
+
+        public virtual IQueryable<Entity> AsNoTracking()
         {
             return _repository.AsNoTracking();
         }
@@ -75,11 +81,13 @@ namespace Domain.Services
         {
             return await _repository.ListAsync(predicate);
         }
-        public async Task<List<Entity>> ListPagedAsync(string searchTerm, string propertyName, int pageNumber, int pageSize)
+
+        public virtual async Task<List<Entity>> ListPagedAsync(string searchTerm, string propertyName, int pageNumber, int pageSize)
         {
             return await _repository.ListPagedAsync(searchTerm, propertyName, pageNumber, pageSize);
         }
-        public async Task<int> CountAsync(string searchTerm, string propertyName)
+
+        public virtual async Task<int> CountAsync(string searchTerm, string propertyName)
         {
             return await _repository.CountAsync(searchTerm, propertyName);
         }
@@ -89,9 +97,11 @@ namespace Domain.Services
             return _repository.Query();
         }
 
-        public virtual async Task<Object> Add(Entity entity)
+        public virtual async Task<object> Add(Entity entity)
         {
-            return await _repository.Add(entity);
+            var result = await _repository.Add(entity);
+            await _repository.SaveChangesAsync();
+            return result;
         }
 
         public virtual void AddRange(IEnumerable<Entity> entities)
@@ -99,7 +109,7 @@ namespace Domain.Services
             _repository.AddRange(entities);
         }
 
-        public void Remove(Entity entity, bool realDelete = false)
+        public virtual void Remove(Entity entity, bool realDelete = false)
         {
             _repository.Remove(entity, realDelete);
         }

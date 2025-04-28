@@ -128,10 +128,9 @@ namespace Api.Controllers
                 {
                     return BadRequest(ModelState);
                 }
-                var data = await _baseApp.Add(dados);
+                var dataSaved = await _baseApp.Add(dados);
                 await _baseApp.SaveChangesAsync();
-                var dataEntity = (EntityEntry<Entity>)data;
-                return Ok(dataEntity.Entity);
+                return Ok(dataSaved);
             }
             catch (DbUpdateException ex)
             {

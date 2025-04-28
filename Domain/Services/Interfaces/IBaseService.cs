@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using Domain.Repositories.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,7 @@ namespace Domain.Services.Interfaces
 {
     public interface IBaseService<Entity> where Entity : BaseEntity
     {
+        IBaseService<Entity> Include(Expression<Func<Entity, object>> include);
         bool Any(Expression<Func<Entity, bool>> predicate);
         Task<bool> AnyAsync(Expression<Func<Entity, bool>> predicate);
         IQueryable<Entity> AsNoTracking();

@@ -33,7 +33,7 @@ namespace Application.Models
         public DateTime DataCadastro { get; set; } = DateTime.UtcNow;
 
         public DateTime? UltimoAcesso { get; set; }
-        public ICollection<EmpresaModel> EmpresasCadastradas { get; set; }
-        public ICollection<UsuarioEmpresaModel> UsuarioEmpresas { get; set; }
+        public ICollection<EmpresaModel>? EmpresasCadastradas { get; set; }
+        public ICollection<UsuarioEmpresaModel>? UsuarioEmpresas { get; set; }
     }
 }

@@ -25,7 +25,7 @@ namespace Infrastructure.Repositories
         }
 
         // Permite encadear Includes antes dos métodos Find, List etc.
-        public BaseRepository<Entity> Include(Expression<Func<Entity, object>> include)
+        public IBaseRepository<Entity> Include(Expression<Func<Entity, object>> include)
         {
             _includes.Add(include);
             return this;

@@ -12,7 +12,6 @@ namespace Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class UsuarioController : BaseController<Usuario, UsuarioModel>
     {
         private readonly IUsuarioApp _usuarioApp;

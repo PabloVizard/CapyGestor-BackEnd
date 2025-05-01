@@ -19,6 +19,8 @@ namespace Infrastructure.Context
         public DbSet<Usuario> Usuario { get; set; }
         public DbSet<Empresa> Empresa { get; set; }
         public DbSet<UsuarioEmpresa> UsuarioEmpresa { get; set; }
+        public DbSet<UsuarioFilial> UsuarioFilial { get; set; }
+        public DbSet<Filial> Filial { get; set; }
 
         public DataContext(DbContextOptions<DataContext> options, IConfiguration configuration)
         : base(options)
@@ -42,6 +44,8 @@ namespace Infrastructure.Context
             modelBuilder.ApplyConfiguration(new UsuarioConfiguration());
             modelBuilder.ApplyConfiguration(new EmpresaConfiguration());
             modelBuilder.ApplyConfiguration(new UsuarioEmpresaConfiguration());
+            modelBuilder.ApplyConfiguration(new FilialConfiguration());
+            modelBuilder.ApplyConfiguration(new UsuarioFilialConfiguration());
         }
     }
 }

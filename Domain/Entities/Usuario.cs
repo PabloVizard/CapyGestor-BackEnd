@@ -35,5 +35,7 @@ namespace Domain.Entities
         public DateTime? UltimoAcesso { get; set; }
         public ICollection<Empresa>? EmpresasCadastradas { get; set; }
         public ICollection<UsuarioEmpresa>? UsuarioEmpresas { get; set; }
+        public ICollection<UsuarioFilial>? UsuarioFiliais { get; set; }
+
     }
 }

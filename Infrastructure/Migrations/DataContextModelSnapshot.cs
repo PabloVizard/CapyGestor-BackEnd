@@ -35,6 +35,44 @@ namespace Infrastructure.Migrations
                         .HasColumnType("tinyint(1)")
                         .HasDefaultValue(true);
 
+                    b.Property<DateTime>("DataCadastro")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<bool>("Removido")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("tinyint(1)")
+                        .HasDefaultValue(false);
+
+                    b.Property<int?>("UsuarioResponsavelId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UsuarioResponsavelId");
+
+                    b.ToTable("Empresa", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.Filial", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Ativo")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("tinyint(1)")
+                        .HasDefaultValue(true);
+
                     b.Property<string>("Bairro")
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
@@ -63,6 +101,9 @@ namespace Infrastructure.Migrations
                     b.Property<string>("Email")
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
+
+                    b.Property<int?>("EmpresaId")
+                        .HasColumnType("int");
 
                     b.Property<string>("InscricaoEstadual")
                         .HasMaxLength(20)
@@ -107,17 +148,14 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(15)
                         .HasColumnType("varchar(15)");
 
-                    b.Property<int>("UsuarioResponsavelId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CpfCnpj")
                         .IsUnique();
 
-                    b.HasIndex("UsuarioResponsavelId");
+                    b.HasIndex("EmpresaId");
 
-                    b.ToTable("Empresa", (string)null);
+                    b.ToTable("Filial", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.Usuario", b =>
@@ -189,6 +227,9 @@ namespace Infrastructure.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<bool>("AcessoTotalFiliais")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<DateTime>("DataCadastro")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime")
@@ -209,15 +250,52 @@ namespace Infrastructure.Migrations
                     b.ToTable("UsuarioEmpresa", (string)null);
                 });
 
+            modelBuilder.Entity("Domain.Entities.UsuarioFilial", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("DataCadastro")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<int?>("FilialId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("UsuarioId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FilialId");
+
+                    b.HasIndex("UsuarioId");
+
+                    b.ToTable("UsuarioFilial", (string)null);
+                });
+
             modelBuilder.Entity("Domain.Entities.Empresa", b =>
                 {
                     b.HasOne("Domain.Entities.Usuario", "UsuarioResponsavel")
                         .WithMany("EmpresasCadastradas")
                         .HasForeignKey("UsuarioResponsavelId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("UsuarioResponsavel");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Filial", b =>
+                {
+                    b.HasOne("Domain.Entities.Empresa", "Empresa")
+                        .WithMany("Filiais")
+                        .HasForeignKey("EmpresaId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("Empresa");
                 });
 
             modelBuilder.Entity("Domain.Entities.UsuarioEmpresa", b =>
@@ -239,9 +317,33 @@ namespace Infrastructure.Migrations
                     b.Navigation("Usuario");
                 });
 
+            modelBuilder.Entity("Domain.Entities.UsuarioFilial", b =>
+                {
+                    b.HasOne("Domain.Entities.Filial", "Filial")
+                        .WithMany("UsuarioFiliais")
+                        .HasForeignKey("FilialId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Domain.Entities.Usuario", "Usuario")
+                        .WithMany("UsuarioFiliais")
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("Filial");
+
+                    b.Navigation("Usuario");
+                });
+
             modelBuilder.Entity("Domain.Entities.Empresa", b =>
                 {
+                    b.Navigation("Filiais");
+
                     b.Navigation("UsuarioEmpresas");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Filial", b =>
+                {
+                    b.Navigation("UsuarioFiliais");
                 });
 
             modelBuilder.Entity("Domain.Entities.Usuario", b =>
@@ -249,6 +351,8 @@ namespace Infrastructure.Migrations
                     b.Navigation("EmpresasCadastradas");
 
                     b.Navigation("UsuarioEmpresas");
+
+                    b.Navigation("UsuarioFiliais");
                 });
 #pragma warning restore 612, 618
         }

@@ -13,6 +13,7 @@ namespace Domain.Entities
         public Usuario? Usuario { get; set; }
         public int EmpresaId { get; set; }
         public Empresa? Empresa { get; set; }
+        public bool AcessoTotalFiliais { get; set; } = true;
         public DateTime DataCadastro { get; set; } = DateTime.UtcNow;
     }
 }

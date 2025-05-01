@@ -7,16 +7,15 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers
 {
-
     [Route("api/[controller]")]
     [ApiController]
-    public class EmpresaController : BaseController<Empresa, EmpresaModel>
+    public class UsuarioEmpresaController : BaseController<UsuarioEmpresa, UsuarioEmpresaModel>
     {
-        private readonly IEmpresaApp _empresaApp;
+        private readonly IUsuarioEmpresaApp _usuarioEmpresaApp;
         private readonly IMapper _mapper;
-        public EmpresaController(IEmpresaApp empresaApp, IMapper mapper) : base(empresaApp, mapper)
+        public UsuarioEmpresaController(IUsuarioEmpresaApp usuarioEmpresaApp, IMapper mapper) : base(usuarioEmpresaApp, mapper)
         {
-            _empresaApp = empresaApp;
+            _usuarioEmpresaApp = usuarioEmpresaApp;
             _mapper = mapper;
         }
     }

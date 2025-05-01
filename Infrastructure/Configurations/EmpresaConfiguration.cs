@@ -18,49 +18,6 @@ namespace Infrastructure.Configurations
                    .IsRequired()
                    .HasMaxLength(100);
 
-            builder.Property(e => e.RazaoSocial)
-                   .IsRequired()
-                   .HasMaxLength(100);
-
-            builder.Property(e => e.InscricaoEstadual)
-                   .HasMaxLength(20);
-
-            builder.Property(e => e.InscricaoMunicipal)
-                   .HasMaxLength(20);
-
-            builder.Property(e => e.Logo)
-                   .HasMaxLength(500);
-
-            builder.Property(e => e.CpfCnpj)
-                   .HasMaxLength(18);
-
-            builder.Property(e => e.TelefoneEmpresa)
-                   .HasMaxLength(15);
-
-            builder.Property(e => e.TelefoneResponsavel)
-                   .HasMaxLength(15);
-
-            builder.Property(e => e.Email)
-                   .HasMaxLength(100);
-
-            builder.Property(e => e.Cep)
-                   .HasMaxLength(10);
-
-            builder.Property(e => e.Rua)
-                   .HasMaxLength(200);
-
-            builder.Property(e => e.Numero)
-                   .HasMaxLength(10);
-
-            builder.Property(e => e.Complemento)
-                   .HasMaxLength(100);
-
-            builder.Property(e => e.Bairro)
-                   .HasMaxLength(100);
-
-            builder.Property(e => e.Cidade)
-                   .HasMaxLength(100);
-
             builder.Property(e => e.Ativo)
                    .HasDefaultValue(true);
 
@@ -69,9 +26,6 @@ namespace Infrastructure.Configurations
 
             builder.Property(e => e.DataCadastro)
                    .HasDefaultValueSql("CURRENT_TIMESTAMP");
-
-            builder.HasIndex(e => e.CpfCnpj)
-                   .IsUnique();
 
             builder.HasOne(e => e.UsuarioResponsavel)
                .WithMany(u => u.EmpresasCadastradas)

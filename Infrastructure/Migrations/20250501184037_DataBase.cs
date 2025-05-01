@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class UsuarioEmpresa : Migration
+    public partial class DataBase : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -53,6 +53,31 @@ namespace Infrastructure.Migrations
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Nome = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
+                    Ativo = table.Column<bool>(type: "tinyint(1)", nullable: false, defaultValue: true),
+                    Removido = table.Column<bool>(type: "tinyint(1)", nullable: false, defaultValue: false),
+                    DataCadastro = table.Column<DateTime>(type: "datetime", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
+                    UsuarioResponsavelId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Empresa", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Empresa_Usuario_UsuarioResponsavelId",
+                        column: x => x.UsuarioResponsavelId,
+                        principalTable: "Usuario",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Filial",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Nome = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     RazaoSocial = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     InscricaoEstadual = table.Column<string>(type: "varchar(20)", maxLength: 20, nullable: true)
@@ -84,17 +109,17 @@ namespace Infrastructure.Migrations
                     Ativo = table.Column<bool>(type: "tinyint(1)", nullable: false, defaultValue: true),
                     Removido = table.Column<bool>(type: "tinyint(1)", nullable: false, defaultValue: false),
                     DataCadastro = table.Column<DateTime>(type: "datetime", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
-                    UsuarioResponsavelId = table.Column<int>(type: "int", nullable: false)
+                    EmpresaId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Empresa", x => x.Id);
+                    table.PrimaryKey("PK_Filial", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Empresa_Usuario_UsuarioResponsavelId",
-                        column: x => x.UsuarioResponsavelId,
-                        principalTable: "Usuario",
+                        name: "FK_Filial_Empresa_EmpresaId",
+                        column: x => x.EmpresaId,
+                        principalTable: "Empresa",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -106,6 +131,7 @@ namespace Infrastructure.Migrations
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     UsuarioId = table.Column<int>(type: "int", nullable: false),
                     EmpresaId = table.Column<int>(type: "int", nullable: false),
+                    AcessoTotalFiliais = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     DataCadastro = table.Column<DateTime>(type: "datetime", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP")
                 },
                 constraints: table =>
@@ -126,16 +152,49 @@ namespace Infrastructure.Migrations
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
-            migrationBuilder.CreateIndex(
-                name: "IX_Empresa_CpfCnpj",
-                table: "Empresa",
-                column: "CpfCnpj",
-                unique: true);
+            migrationBuilder.CreateTable(
+                name: "UsuarioFilial",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    UsuarioId = table.Column<int>(type: "int", nullable: true),
+                    FilialId = table.Column<int>(type: "int", nullable: true),
+                    DataCadastro = table.Column<DateTime>(type: "datetime", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UsuarioFilial", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UsuarioFilial_Filial_FilialId",
+                        column: x => x.FilialId,
+                        principalTable: "Filial",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UsuarioFilial_Usuario_UsuarioId",
+                        column: x => x.UsuarioId,
+                        principalTable: "Usuario",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Empresa_UsuarioResponsavelId",
                 table: "Empresa",
                 column: "UsuarioResponsavelId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Filial_CpfCnpj",
+                table: "Filial",
+                column: "CpfCnpj",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Filial_EmpresaId",
+                table: "Filial",
+                column: "EmpresaId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UsuarioEmpresa_EmpresaId",
@@ -146,6 +205,16 @@ namespace Infrastructure.Migrations
                 name: "IX_UsuarioEmpresa_UsuarioId",
                 table: "UsuarioEmpresa",
                 column: "UsuarioId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UsuarioFilial_FilialId",
+                table: "UsuarioFilial",
+                column: "FilialId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UsuarioFilial_UsuarioId",
+                table: "UsuarioFilial",
+                column: "UsuarioId");
         }
 
         /// <inheritdoc />
@@ -153,6 +222,12 @@ namespace Infrastructure.Migrations
         {
             migrationBuilder.DropTable(
                 name: "UsuarioEmpresa");
+
+            migrationBuilder.DropTable(
+                name: "UsuarioFilial");
+
+            migrationBuilder.DropTable(
+                name: "Filial");
 
             migrationBuilder.DropTable(
                 name: "Empresa");

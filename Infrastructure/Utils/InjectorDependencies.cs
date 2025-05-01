@@ -12,6 +12,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Application;
+using Application.Interfaces;
 
 namespace Infrastructure.Utils
 {
@@ -33,6 +35,8 @@ namespace Infrastructure.Utils
             services.AddScoped<IUsuarioApp, UsuarioApp>();
             services.AddScoped<IEmpresaApp, EmpresaApp>();
             services.AddScoped<IUsuarioEmpresaApp, UsuarioEmpresaApp>();
+            services.AddScoped<IFilialApp, FilialApp>();
+            services.AddScoped<IUsuarioFilialApp, UsuarioFilialApp>();
 
             #endregion
 
@@ -42,6 +46,8 @@ namespace Infrastructure.Utils
             services.AddScoped<IUsuarioService, UsuarioService>();
             services.AddScoped<IEmpresaService, EmpresaService>();
             services.AddScoped<IUsuarioEmpresaService, UsuarioEmpresaService>();
+            services.AddScoped<IFilialService, FilialService>();
+            services.AddScoped<IUsuarioFilialService, UsuarioFilialService>();
 
             #endregion
 
@@ -51,6 +57,8 @@ namespace Infrastructure.Utils
             services.AddScoped<IUsuarioRepository, UsuarioRepository>();
             services.AddScoped<IEmpresaRepository, EmpresaRepository>();
             services.AddScoped<IUsuarioEmpresaRepository, UsuarioEmpresaRepository>();
+            services.AddScoped<IFilialRepository, FilialRepository>();
+            services.AddScoped<IUsuarioFilialRepository, UsuarioFilialRepository>();
             #endregion
         }
     }
